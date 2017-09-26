@@ -1,0 +1,18 @@
+.legend_title {
+	font-size: 14px;
+	fill: #000000;
+	font-weight: 300;
+}
+
+.legend_axis path,
+.legend_axis tick,
+.legend_axis line {
+	fill: none;
+	stroke: none;
+}
+
+.legend_axis text {
+	font-size: 12px;
+	fill: #000000;
+	font-weight: 400;
+}
