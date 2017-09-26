@@ -9,6 +9,7 @@
 
 .node:hover {
   fill: #000;
+  cursor: pointer;
 }
 
 .link {
@@ -28,7 +29,7 @@
 }
 
 .node--target {
-  fill: #d62728;
+  fill: #000;
 }
 </style>
 
@@ -69,7 +70,7 @@ var svg = d3.select("body").append("svg")
 var link = svg.append("g").selectAll(".link"),
     node = svg.append("g").selectAll(".node");
 
-//Append Info
+// Append Info
 var info = svg.append("text")
     .attr("class", "legend_title")
 	.attr("x", -(diameter/2))
@@ -82,7 +83,7 @@ function getThickness(w) {
 }
 
 function getColor(w) {
-    //value from 0 to 1
+    // Value from 0 to 1
     var hue=(w*120).toString(10); //((1-w)*120).toString(10);
     return ["hsl(",hue,",100%,50%)"].join("");
 }
@@ -99,7 +100,7 @@ function update() {
             .enter().append("path")
                 .each(function(d) { d.source = d[0], d.target = d[d.length - 1]; })
                 .attr("class", "link")
-                .attr("stroke", "steelblue")
+                .attr("stroke", "lightgray")
                 .attr("stroke-width", function(d) {
                     w = 0;
                     d.source.data.imports.forEach(function(item) {
@@ -154,7 +155,7 @@ function mouseovered(d) {
 
 function mouseouted(d) {
     link
-        .attr("stroke", "steelblue");
+        .attr("stroke", "lightgray");
 
     node
         .classed("node--target", false)
