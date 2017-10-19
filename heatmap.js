@@ -1,3 +1,5 @@
+import * as d3 from 'd3';
+import {simMatrixToObj} from './utils.js'
 
 var innerRadius = 720;
 var margin = {top: 200, right: 0, bottom: 10, left: 200},
@@ -8,7 +10,7 @@ var x = d3.scaleBand().rangeRound([0, width]),
     z = d3.scaleLinear().domain([0, 4]).clamp(true),
     c = d3.scaleOrdinal(d3.schemeCategory10).domain(d3.range(10));
 
-var svg = d3.select("sim-plot").append("svg")
+var svg = d3.select("body").append("svg")
     .attr("width", width + margin.left + margin.right)
     .attr("height", height + margin.top + margin.bottom)
     //.style("margin-left", -margin.left + "px")
@@ -21,22 +23,28 @@ function getColor(w) {
     return ["hsl(",hue,",100%,50%)"].join("");
 }
 
-function heatmap(scores) { // TODO split data processing and rendering into separate functions
+function heatmap(data) { // TODO split data processing and rendering into separate functions
+    console.log(data);
+
+    var scoresById = d3.tsvParse(data);
+    console.log(scoresById);
+
+    var scores = simMatrixToObj(scoresById);
     console.log(scores);
 
     // array of {name, group}
     var nodes = [];
     var nodes_map = {};
     scores.forEach(function(node, i) {
-        idx_grp = node.name.indexOf('.');
-        group = "g";
-        name = node.name;
+        var idx_grp = node.name.indexOf('.');
+        var group = "g";
+        var name = node.name;
         if(idx_grp >= 0) {
             group = node.name.substring(0,idx_grp);
             name = node.name.substring(idx_grp+1);
         }
 
-        n = {"name": name, "group": group, "index": i, "count": 0};
+        var n = {"name": name, "group": group, "index": i, "count": 0};
         nodes.push(n);
         nodes_map[node.name] = n;
     });
@@ -49,14 +57,14 @@ function heatmap(scores) { // TODO split data processing and rendering into sepa
     });
 
     // Convert links to matrix; count character occurrences.
-    scoresById.forEach(function(node) {
-        imports = node.imports;
-        node_source = node.name;
-        node_source_index = nodes_map[node_source].index;
+    scores.forEach(function(node) {
+        var imports = node.imports;
+        var node_source = node.name;
+        var node_source_index = nodes_map[node_source].index;
         imports.forEach(function(edge) {
-            node_target = edge.name;
-            node_target_index = nodes_map[node_target].index;
-            weight = edge.weight;
+            var node_target = edge.name;
+            var node_target_index = nodes_map[node_target].index;
+            var weight = edge.weight;
 
             matrix[node_source_index][node_target_index].z = weight;
             nodes[node_source_index].count += weight;
@@ -165,5 +173,6 @@ function heatmap(scores) { // TODO split data processing and rendering into sepa
         order("group");
         d3.select("#order").property("selectedIndex", 2).node().focus();
     }, 5000);
-
 }
+
+export { heatmap };
