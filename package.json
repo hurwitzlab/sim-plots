@@ -1,0 +1,19 @@
+{
+  "name": "sim-plots",
+  "version": "1.0.0",
+  "description": "Sequence similarity plots",
+  "main": "index.html",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hurwitzlab/sim-plots.git"
+  },
+  "author": "Matt Bomhoff",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/hurwitzlab/sim-plots/issues"
+  },
+  "homepage": "https://github.com/hurwitzlab/sim-plots#readme"
+}
