@@ -1,15 +1,7 @@
 import * as d3 from 'd3';
 import {simMatrixToObj} from './utils.js'
 
-function getColor(w) {
-    // Value from 0 to 1
-    var hue=(w*120).toString(10);
-    return ["hsl(",hue,",100%,50%)"].join("");
-}
-
 function heatmap(id, data) { // TODO split data processing and rendering into separate functions
-    console.log(data);
-
     // Parse and format distance matrix
     var scoresById = d3.tsvParse(data);
     var scores = simMatrixToObj(scoresById);
@@ -129,6 +121,11 @@ function heatmap(id, data) { // TODO split data processing and rendering into se
         .attr("text-anchor", "end")
         .text(function(d, i) { return nodes[i].name; });
 
+    function getColor(w) { // value from 0 to 1
+        var hue=(w*120).toString(10);
+        return ["hsl(",hue,",100%,50%)"].join("");
+    }
+
     function row(row) {
         var cell = d3.select(this).selectAll(".cell")
             .data(row.filter(function(d) { return d.z; }))
@@ -149,12 +146,12 @@ function heatmap(id, data) { // TODO split data processing and rendering into se
 
     // Add interaction handlers
     function mouseover(p) {
-        svg.selectAll(".row text").attr("fill", function(d, i) { if (i == p.y) return "red"; return "black"; });
-        svg.selectAll(".column text").attr("fill", function(d, i) { if (i == p.x) return "red"; return "black"; });
+        svg.selectAll(".row text").classed("active", function(d, i) { return (i == p.y) });
+        svg.selectAll(".column text").classed("active", function(d, i) { return (i == p.x) });
     }
 
     function mouseout() {
-        d3.selectAll("text").attr("fill", "black");
+        d3.selectAll("text").classed("active", false);
     }
 
     menu.select("select").on("change", function() {

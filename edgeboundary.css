@@ -1,0 +1,29 @@
+.node {
+  font: 300 11px "Helvetica Neue", Helvetica, Arial, sans-serif;
+  fill: #bbb;
+}
+
+.node:hover {
+  fill: #000;
+  cursor: pointer;
+}
+
+.link {
+  stroke-opacity: .4;
+  fill: none;
+  pointer-events: none;
+}
+
+.node:hover,
+.node--source,
+.node--target {
+  font-weight: 700;
+}
+
+.node--source {
+  fill: #2ca02c;
+}
+
+.node--target {
+  fill: #000;
+}
