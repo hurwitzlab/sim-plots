@@ -1,22 +1,6 @@
 import * as d3 from 'd3';
 import {simMatrixToObj} from './utils.js'
 
-var innerRadius = 720;
-var margin = {top: 200, right: 0, bottom: 10, left: 200},
-    width = innerRadius,
-    height = innerRadius;
-
-var x = d3.scaleBand().rangeRound([0, width]),
-    z = d3.scaleLinear().domain([0, 4]).clamp(true),
-    c = d3.scaleOrdinal(d3.schemeCategory10).domain(d3.range(10));
-
-var svg = d3.select("body").append("svg")
-    .attr("width", width + margin.left + margin.right)
-    .attr("height", height + margin.top + margin.bottom)
-    //.style("margin-left", -margin.left + "px")
-    .append("g")
-    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
 function getColor(w) {
     // Value from 0 to 1
     var hue=(w*120).toString(10);
@@ -71,6 +55,22 @@ function heatmap(data) { // TODO split data processing and rendering into separa
         });
         matrix[node_source_index][node_source_index].z = 1.0;
     });
+
+    var innerRadius = 720;
+    var margin = {top: 200, right: 0, bottom: 10, left: 200},
+        width = innerRadius,
+        height = innerRadius;
+
+    var x = d3.scaleBand().rangeRound([0, width]),
+        z = d3.scaleLinear().domain([0, 4]).clamp(true),
+        c = d3.scaleOrdinal(d3.schemeCategory10).domain(d3.range(10));
+
+    var svg = d3.select("div#sim-plot").html().append("svg")
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)
+        //.style("margin-left", -margin.left + "px")
+        .append("g")
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
     // Precompute the orders
     var n = nodes.length;
