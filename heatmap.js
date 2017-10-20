@@ -7,7 +7,7 @@ function getColor(w) {
     return ["hsl(",hue,",100%,50%)"].join("");
 }
 
-function heatmap(data) { // TODO split data processing and rendering into separate functions
+function heatmap(id, data) { // TODO split data processing and rendering into separate functions
     console.log(data);
 
     var scoresById = d3.tsvParse(data);
@@ -65,7 +65,9 @@ function heatmap(data) { // TODO split data processing and rendering into separa
         z = d3.scaleLinear().domain([0, 4]).clamp(true),
         c = d3.scaleOrdinal(d3.schemeCategory10).domain(d3.range(10));
 
-    var svg = d3.select("div#sim-plot").html().append("svg")
+    var svg = d3.select('#'+id)
+        .html("")
+        .append("svg")
         .attr("width", width + margin.left + margin.right)
         .attr("height", height + margin.top + margin.bottom)
         //.style("margin-left", -margin.left + "px")
