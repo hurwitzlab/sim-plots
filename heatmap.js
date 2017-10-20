@@ -10,9 +10,8 @@ function getColor(w) {
 function heatmap(id, data) { // TODO split data processing and rendering into separate functions
     console.log(data);
 
+    // Parse and format distance matrix
     var scoresById = d3.tsvParse(data);
-    console.log(scoresById);
-
     var scores = simMatrixToObj(scoresById);
     console.log(scores);
 
@@ -23,7 +22,7 @@ function heatmap(id, data) { // TODO split data processing and rendering into se
         var idx_grp = node.name.indexOf('.');
         var group = "g";
         var name = node.name;
-        if(idx_grp >= 0) {
+        if (idx_grp >= 0) {
             group = node.name.substring(0,idx_grp);
             name = node.name.substring(idx_grp+1);
         }
@@ -56,8 +55,8 @@ function heatmap(id, data) { // TODO split data processing and rendering into se
         matrix[node_source_index][node_source_index].z = 1.0;
     });
 
-    var innerRadius = 720;
-    var margin = {top: 200, right: 0, bottom: 10, left: 200},
+    var innerRadius = 400;
+    var margin = {top: 0, right: 200, bottom: 200, left: 0},
         width = innerRadius,
         height = innerRadius;
 
@@ -65,12 +64,17 @@ function heatmap(id, data) { // TODO split data processing and rendering into se
         z = d3.scaleLinear().domain([0, 4]).clamp(true),
         c = d3.scaleOrdinal(d3.schemeCategory10).domain(d3.range(10));
 
-    var svg = d3.select('#'+id)
-        .html("")
+
+    // Create menu and svg
+    var container = d3.select('#'+id);
+
+    var menu = container
+        .html('<aside style="margin-top:0px;"><p>Order: <select id="order"><option value="group">by Group</option><option value="name">by Name</option><option value="count">by Frequency</option></select></aside>');
+
+    var svg = container
         .append("svg")
         .attr("width", width + margin.left + margin.right)
         .attr("height", height + margin.top + margin.bottom)
-        //.style("margin-left", -margin.left + "px")
         .append("g")
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
@@ -85,8 +89,10 @@ function heatmap(id, data) { // TODO split data processing and rendering into se
     // The default sort order
     x.domain(orders.group);
 
+    // Draw heatmap and labels
     svg.append("rect")
         .attr("class", "background")
+        .attr("fill", "white")
         .attr("width", width)
         .attr("height", height);
 
@@ -101,10 +107,10 @@ function heatmap(id, data) { // TODO split data processing and rendering into se
         .attr("x2", width);
 
     row.append("text")
-        .attr("x", -6)
-        .attr("y", x.bandwidth() / 2) //x.rangeBand() / 2)
+        .attr("x", width )
+        .attr("y", x.bandwidth() / 2)
         .attr("dy", ".32em")
-        .attr("text-anchor", "end")
+        .attr("text-anchor", "start")
         .text(function(d, i) { return nodes[i].name; });
 
     var column = svg.selectAll(".column")
@@ -117,10 +123,10 @@ function heatmap(id, data) { // TODO split data processing and rendering into se
         .attr("x1", -width);
 
     column.append("text")
-        .attr("x", 6)
-        .attr("y", x.bandwidth() / 2) //x.rangeBand() / 2)
+        .attr("x", -width)
+        .attr("y", x.bandwidth() / 2)
         .attr("dy", ".32em")
-        .attr("text-anchor", "start")
+        .attr("text-anchor", "end")
         .text(function(d, i) { return nodes[i].name; });
 
     function row(row) {
@@ -129,8 +135,8 @@ function heatmap(id, data) { // TODO split data processing and rendering into se
             .enter().append("rect")
                 .attr("class", "cell")
                 .attr("x", function(d) { return x(d.x); })
-                .attr("width", x.bandwidth()) //x.rangeBand())
-                .attr("height", x.bandwidth()) //x.rangeBand())
+                .attr("width", x.bandwidth())
+                .attr("height", x.bandwidth())
                 .attr("fill", function(d) {
                     return getColor(d.z);
                 })
@@ -140,24 +146,25 @@ function heatmap(id, data) { // TODO split data processing and rendering into se
                 .on("mouseout", mouseout);
     }
 
+
+    // Add interaction handlers
     function mouseover(p) {
-        d3.selectAll(".row text").classed("active", function(d, i) { return i == p.y; });
-        d3.selectAll(".column text").classed("active", function(d, i) { return i == p.x; });
+        svg.selectAll(".row text").attr("fill", function(d, i) { if (i == p.y) return "red"; return "black"; });
+        svg.selectAll(".column text").attr("fill", function(d, i) { if (i == p.x) return "red"; return "black"; });
     }
 
     function mouseout() {
-        d3.selectAll("text").classed("active", false);
+        d3.selectAll("text").attr("fill", "black");
     }
 
-    d3.select("#order").on("change", function() {
-        clearTimeout(timeout);
+    menu.select("select").on("change", function() {
         order(this.value);
     });
 
     function order(value) {
         x.domain(orders[value]);
 
-        var t = svg.transition().duration(2500);
+        var t = svg.transition().duration(1000);
 
         t.selectAll(".row")
             .delay(function(d, i) { return x(i) * 4; })
@@ -170,11 +177,6 @@ function heatmap(id, data) { // TODO split data processing and rendering into se
             .delay(function(d, i) { return x(i) * 4; })
             .attr("transform", function(d, i) { return "translate(" + x(i) + ")rotate(-90)"; });
     }
-
-    var timeout = setTimeout(function() {
-        order("group");
-        d3.select("#order").property("selectedIndex", 2).node().focus();
-    }, 5000);
 }
 
 export { heatmap };
