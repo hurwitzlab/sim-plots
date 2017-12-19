@@ -1,0 +1,24 @@
+body {
+    font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+    font-size: 14px;
+}
+
+.axis path,
+.axis line {
+    fill: none;
+    stroke: black;
+    shape-rendering: crispEdges;
+}
+
+text {
+    font-size : 12px;
+}
+
+.axis text {
+    font-size: 10px;
+}
+
+circle {
+    stroke: #1f77b4;
+    fill : #1f77b4;
+}

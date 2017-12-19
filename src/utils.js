@@ -3,7 +3,7 @@ function simMatrixToObj(simMatrix) {
 
     simMatrix.forEach(function(row) {
         var id1 = row[""];
-	if (id1 !== "") {
+	    if (id1 !== "") {
             var imports = [];
             Object.keys(row).forEach(function(id2) {
                 if (id2 !== "" && id1 !== id2) {
@@ -62,5 +62,5 @@ function getUrlVars() {
     return vars;
 }
 
-export {simMatrixToObj};
-export {getUrlVars};
+//export {simMatrixToObj};
+//export {getUrlVars};
