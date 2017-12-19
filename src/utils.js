@@ -62,5 +62,5 @@ function getUrlVars() {
     return vars;
 }
 
-//export {simMatrixToObj};
-//export {getUrlVars};
+export {simMatrixToObj};
+export {getUrlVars};

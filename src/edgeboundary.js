@@ -4,7 +4,7 @@ import * as utils from './utils.js'
 // Create edge-bundling chart (adapted from https://bl.ocks.org/mbostock/1044242)
 function edgeboundary(id, data) { // TODO split data processing and rendering into separate functions
     // Parse query parameters
-    var min_similarity = parseFloat(getUrlVars()['min']) || 0.3;
+    var min_similarity = parseFloat(utils.getUrlVars()['min']) || 0.3;
 
     var diameter = 600,
         radius = diameter / 2,
@@ -47,7 +47,7 @@ function edgeboundary(id, data) { // TODO split data processing and rendering in
     function update() {
         // Parse and format distance matrix
         var scoresById = d3.tsvParse(data);
-        var scores = simMatrixToObj(scoresById);
+        var scores = utils.simMatrixToObj(scoresById);
         console.log(scores);
 
         var root = packageHierarchy(scores);

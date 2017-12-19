@@ -1,5 +1,5 @@
 import * as d3 from 'd3';
-import {simMatrixToObj} from './utils.js'
+import {simMatrixToObj} from './utils.js';
 
 function heatmap(id, data) { // TODO split data processing and rendering into separate functions
     // Parse and format distance matrix
