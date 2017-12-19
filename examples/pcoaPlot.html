@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Sim Plots - PCOA Example</title>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/4.12.0/d3.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/numeric/1.2.6/numeric.min.js"></script>
+    <script src="../mds.js/mds.js"></script>
+    <script src="../src/utils.js"></script>
+    <script src="../src/pcoaPlot.js"></script>
+
+    <link rel="stylesheet" type="text/css" href="../src/pcoaPlot.css">
+</head>
+
+<body>
+
+<div id="plot"></div>
+
+<script>
+var data = d3.text("data/pov_log.matrix", data => {
+    pcoaPlot("plot", data);
+});
+</script>
+
+</body>
+
+</html>
