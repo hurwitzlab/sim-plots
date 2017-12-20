@@ -1,6 +1,6 @@
 import * as d3 from 'd3';
 import * as numeric from 'numericjs';
-import * as mdslib from '../mds.js/mds.js';
+import * as mdslib from '../node_modules/mds.js/mds.js';
 
 function pcoaPlot(id, data, params) { // TODO split data processing and rendering into separate functions
     params = params || {};

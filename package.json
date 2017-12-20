@@ -4,7 +4,6 @@
   "description": "Sequence similarity plots",
   "main": "index.html",
   "scripts": {
-    "install": "git clone git@github.com:hurwitzlab/mds.js.git",
     "prestart": "npm install",
     "start": "http-server -a localhost -p 8088 -c-1 .",
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -21,7 +20,8 @@
   "homepage": "https://github.com/hurwitzlab/sim-plots#readme",
   "dependencies": {
     "d3": "^4.12.0",
-    "numericjs": "^1.2.6"
+    "numericjs": "^1.2.6",
+    "mds.js": "git+https://github.com/hurwitzlab/mds.js.git"
   },
   "devDependencies": {
     "http-server": "^0.9.0"
