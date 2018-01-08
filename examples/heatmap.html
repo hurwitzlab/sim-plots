@@ -16,7 +16,7 @@
 <div id="plot"></div>
 
 <script>
-var data = d3.text("data/pov_log.matrix", data => {
+d3.text("data/pov_log.matrix", data => {
     heatmap("plot", data);
 });
 </script>
