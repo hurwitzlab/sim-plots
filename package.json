@@ -19,7 +19,7 @@
   },
   "homepage": "https://github.com/hurwitzlab/sim-plots#readme",
   "dependencies": {
-    "d3": "^3.5.17",
+    "d3": "^4.12.0",
     "d3.chart.bubble-matrix": "git+https://github.com/hurwitzlab/d3.chart.bubble-matrix.git",
     "mds.js": "git+https://github.com/hurwitzlab/mds.js.git",
     "numericjs": "^1.2.6"

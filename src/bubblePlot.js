@@ -1,5 +1,4 @@
-import * as d3 from 'd3';
-import * as chart from 'd3.chart.bubble-matrix';
+import * as chart from 'd3.chart.bubble-matrix/dist/chart.js';
 require('d3.chart.bubble-matrix/dist/style.css');
 require('d3.chart.bubble-matrix/dist/theme.css');
 
