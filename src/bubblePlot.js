@@ -1,5 +1,7 @@
-import * as d3 from 'd3-v3';
-import * as bubble from 'd3.chart.bubble-matrix';
+import * as d3 from 'd3';
+import * as chart from 'd3.chart.bubble-matrix';
+require('d3.chart.bubble-matrix/dist/style.css');
+require('d3.chart.bubble-matrix/dist/theme.css');
 
 function bubblePlot(id, data, params) { // TODO split data processing and rendering into separate functions
     params = params || {};
@@ -36,7 +38,7 @@ function bubblePlot(id, data, params) { // TODO split data processing and render
     var width = Object.keys(columns).length * 200;
     var height = Object.keys(rows).length * 40;
 
-    var chart = d3.select('#plot').append('svg')
+    var chart = d3.select('#'+id).append('svg')
                   .chart('BubbleMatrix')
                   .width(width).height(height)
                   .slanted(true);
