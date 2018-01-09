@@ -4,6 +4,7 @@
   "description": "Sequence similarity plots",
   "main": "index.html",
   "scripts": {
+    "install": "git clone https://github.com/d3/d3.git -b v3.5.17 node_modules/d3-v3",
     "prestart": "npm install",
     "start": "http-server -a localhost -p 8088 -c-1 .",
     "test": "echo \"Error: no test specified\" && exit 1"

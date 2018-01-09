@@ -1,4 +1,4 @@
-import * as d3 from 'd3';
+import * as d3 from 'd3-v3';
 import * as bubble from 'd3.chart.bubble-matrix';
 
 function bubblePlot(id, data, params) { // TODO split data processing and rendering into separate functions
