@@ -5,10 +5,11 @@ function bubblePlot(id, data, params) { // TODO split data processing and render
     params = params || {};
 
     // Convert input data into format required by d3.chart.bubble-matrix
+    var scores = d3.csv.parse(data);
     var columns = {};
     var rows = {};
     var maxValue = 10;
-    data.forEach(function(row) {
+    scores.forEach(function(row) {
         columns[row.sample] = 1;
 
         if (typeof rows[row.Name] === 'undefined')
