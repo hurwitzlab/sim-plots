@@ -28,17 +28,22 @@ function pcoaPlot(id, data, params) { // TODO split data processing and renderin
 
     var mds = new mdslib.mds();
 
-    var positions = numeric.transpose(mds.classic(matrix));
+    try {
+        var positions = numeric.transpose(mds.classic(matrix));
 
-    mds.drawD3ScatterPlot(d3.select("#"+id),
-        positions[0],
-        positions[1],
-        labels,
-        {
-            w : params.width || Math.min(document.documentElement.clientWidth - 20),
-            h : params.height || Math.min(document.documentElement.clientHeight - 20),
-            padding : (typeof params.padding === "undefined" ? 100 : params.padding)
-        });
+        mds.drawD3ScatterPlot(d3.select("#"+id),
+            positions[0],
+            positions[1],
+            labels,
+            {
+                w : params.width || Math.min(document.documentElement.clientWidth - 20),
+                h : params.height || Math.min(document.documentElement.clientHeight - 20),
+                padding : (typeof params.padding === "undefined" ? 100 : params.padding)
+            });
+    }
+    catch (error) {
+        console.error("pcoaPlot: error: ", error);
+    }
 }
 
 export { pcoaPlot };
