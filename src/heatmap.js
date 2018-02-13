@@ -1,11 +1,154 @@
 import * as d3 from 'd3';
 import {simMatrixToObj} from './utils.js';
 
-function heatmap(id, data) { // TODO split data processing and rendering into separate functions
+function heatmap(id, obj) { // TODO split data processing and rendering into separate functions
+    console.log(obj);
+
+    // Get row and column labels
+    var xLabels = {};
+    var yLabels = {};
+    Object.keys(obj).forEach(xLabel => {
+        xLabels[xLabel] = 1;
+        Object.keys(obj[xLabel]).forEach(yLabel => {
+            yLabels[yLabel] = 1;
+        });
+    });
+    xLabels = Object.keys(xLabels);
+    yLabels = Object.keys(yLabels);
+
+    // Build heatmap matrix
+    var matrix = [];
+    var maxFreq = 0;
+    yLabels.forEach((yLabel, yIndex) => {
+        xLabels.forEach((xLabel, xIndex) => {
+            var freq = obj[xLabel][yLabel] || 0;
+
+            if (typeof matrix[yIndex] === 'undefined')
+                matrix[yIndex] = [];
+            matrix[yIndex][xIndex] = {
+                x: xIndex,
+                y: yIndex,
+                z: freq
+            }
+
+            maxFreq = Math.max(maxFreq, freq);
+        });
+    });
+    console.log("matrix:", matrix);
+
+
+    //
+    // Rendering
+    //
+
+    // Create background
+    var margin = { top: 0, right: 200, bottom: 200, left: 0 },
+        width = xLabels.length * 50,
+        height = yLabels.length * 50;
+
+    var container = d3.select('#'+id);
+    var svg = container
+        .append("svg")
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)
+        .append("g")
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+    // Sort columns and rows by label
+    var xDomain = d3.range(xLabels.length).sort(function(a, b) { return d3.ascending(xLabels[a], xLabels[b]); });
+    var yDomain = d3.range(yLabels.length).sort(function(a, b) { return d3.ascending(yLabels[a], yLabels[b]); });
+    var x = d3.scaleBand().rangeRound([0, width]);
+    var y = d3.scaleBand().rangeRound([0, height]);
+    x.domain(xDomain);
+    y.domain(yDomain);
+
+    // Setup color scale
+    var colorScale = d3.scaleLinear().domain([1, maxFreq]).range(['yellow', 'orange']);
+
+    // Draw heatmap
+    svg.append("rect")
+        .attr("class", "background")
+        .attr("fill", "white")
+        .attr("width", width)
+        .attr("height", height);
+
+    // Draw rows
+    var row = svg.selectAll(".row")
+        .data(matrix)
+        .enter().append("g")
+            .attr("class", "row")
+            .attr("transform", function(d, i) { return "translate(0," + y(i) + ")"; })
+            .each(function(row) {
+                d3.select(this).selectAll(".cell")
+                    .data(row.filter(function(d) { return d.z; }))
+                    .enter().append("rect")
+                        .attr("class", "cell")
+                        .attr("x", function(d) { return x(d.x); })
+                        .attr("width", x.bandwidth())
+                        .attr("height", x.bandwidth())
+                        .attr("fill", function(d) { return colorScale(d.z); })
+                        .on("mouseover", mouseover)
+                        .on("mouseout", mouseout);
+            });
+
+    row.append("text")
+        .attr("x", width + 5)
+        .attr("y", x.bandwidth() / 2)
+        .attr("dy", ".32em")
+        .attr("text-anchor", "start")
+        .attr("font-family", "Arial")
+        .attr("font-size", "0.85em")
+        .attr("fill", "dimgray")
+        .text(function(d, i) { return yLabels[i]; });
+
+    // Draw column labels
+    var column = svg.selectAll(".column")
+        .data(xLabels)
+        .enter().append("g")
+            .attr("class", "column")
+            .attr("transform", function(d, i) { return "translate(" + x(i) + ")rotate(-90)"; });
+
+    column.append("text")
+        .attr("x", -height - 5)
+        .attr("y", x.bandwidth() / 2)
+        .attr("dy", ".32em")
+        .attr("text-anchor", "end")
+        .attr("font-family", "Arial")
+        .attr("font-size", "0.85em")
+        .attr("fill", "dimgray")
+        .text(function(d, i) { return xLabels[i]; });
+
+    // Interaction handlers
+    function mouseover(p) {
+        svg.selectAll(".row text").classed("active", function(d, i) { return (i == p.y) });
+        svg.selectAll(".column text").classed("active", function(d, i) { return (i == p.x) });
+    }
+
+    function mouseout() {
+        d3.selectAll("text").classed("active", false);
+    }
+
+    // Draw legend
+    var legendLinear = d3.legendColor()
+        .shapeWidth(15)
+        .cells(maxFreq)
+        .orient("vertical")
+        .scale(colorScale)
+        .labelFormat("d")
+        .title("Frequency");
+
+    svg.append("g")
+        .attr("font-family", "Arial")
+        .attr("fill", "dimgray")
+        .attr("transform", "translate(" + (width + 100) + "," + (height/2 - 20) + ")")
+        .call(legendLinear);
+}
+
+function symmetricalHeatmap(id, data) { // TODO split data processing and rendering into separate functions
     // Parse and format distance matrix
     var scoresById = d3.tsvParse(data);
     var scores = simMatrixToObj(scoresById);
-    console.log(scores);
+    //console.log(scores);
 
     // array of {name, group}
     var nodes = [];
@@ -30,6 +173,7 @@ function heatmap(id, data) { // TODO split data processing and rendering into se
     nodes.forEach(function(node, i) {
         matrix[i] = d3.range(n).map(function(j) { return {x: j, y: i, z: 0}; });
     });
+    console.log("nodes:", nodes);
 
     // Convert links to matrix; count character occurrences.
     scores.forEach(function(node) {
@@ -46,6 +190,7 @@ function heatmap(id, data) { // TODO split data processing and rendering into se
         });
         matrix[node_source_index][node_source_index].z = 1.0;
     });
+    console.log("matrix:", matrix);
 
     var innerRadius = 400;
     var margin = {top: 0, right: 200, bottom: 200, left: 0},
@@ -177,3 +322,4 @@ function heatmap(id, data) { // TODO split data processing and rendering into se
 }
 
 export { heatmap };
+export { symmetricalHeatmap };
