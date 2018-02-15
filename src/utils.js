@@ -29,9 +29,9 @@ function ohanaBlastTabToObj(hits) {
     var freq = [];
 
     hits.forEach(hit => {
-        var fields = /^([a-z0-9]+)_[a-z0-9]+_0+(\d+m)/i.exec(hit.sseqid);
+        var fields = /^([a-z0-9]+)_([a-z0-9]+_)?0*(\d+)m/i.exec(hit.sseqid);
         var name = fields[1];
-        var depth = fields[2];
+        var depth = fields[3];
 
         if (typeof freq[name] === 'undefined')
             freq[name] = [];

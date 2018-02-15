@@ -1,7 +1,10 @@
 import * as d3 from 'd3';
-import {simMatrixToObj} from './utils.js';
+import {legendColor} from 'd3-svg-legend';
+import {simMatrixToObj, ohanaBlastTabToObj} from './utils.js';
 
-function heatmap(id, obj) { // TODO split data processing and rendering into separate functions
+function heatmap(id, data) { // TODO split data processing and rendering into separate functions
+    var obj = d3.tsvParse(obj);
+    obj = ohanaBlastTabToObj(obj);
     console.log(obj);
 
     // Get row and column labels
@@ -42,7 +45,7 @@ function heatmap(id, obj) { // TODO split data processing and rendering into sep
     //
 
     // Create background
-    var margin = { top: 0, right: 200, bottom: 200, left: 0 },
+    var margin = { top: 0, right: 200, bottom: 100, left: 0 },
         width = xLabels.length * 50,
         height = yLabels.length * 50;
 
@@ -56,7 +59,7 @@ function heatmap(id, obj) { // TODO split data processing and rendering into sep
 
     // Sort columns and rows by label
     var xDomain = d3.range(xLabels.length).sort(function(a, b) { return d3.ascending(xLabels[a], xLabels[b]); });
-    var yDomain = d3.range(yLabels.length).sort(function(a, b) { return d3.ascending(yLabels[a], yLabels[b]); });
+    var yDomain = d3.range(yLabels.length).sort(function(a, b) { return d3.ascending(yLabels[a]*1, yLabels[b]*1); }); // use *1 to force integer sort
     var x = d3.scaleBand().rangeRound([0, width]);
     var y = d3.scaleBand().rangeRound([0, height]);
     x.domain(xDomain);
@@ -129,9 +132,9 @@ function heatmap(id, obj) { // TODO split data processing and rendering into sep
     }
 
     // Draw legend
-    var legendLinear = d3.legendColor()
+    var legendLinear = legendColor()
         .shapeWidth(15)
-        .cells(maxFreq)
+        .cells(Math.min(maxFreq, 5))
         .orient("vertical")
         .scale(colorScale)
         .labelFormat("d")
