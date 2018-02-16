@@ -3,7 +3,7 @@ import {legendColor} from 'd3-svg-legend';
 import {simMatrixToObj, ohanaBlastTabToObj} from './utils.js';
 
 function heatmap(id, data) { // TODO split data processing and rendering into separate functions
-    var obj = d3.tsvParse(obj);
+    var obj = d3.tsvParse(data);
     obj = ohanaBlastTabToObj(obj);
     console.log(obj);
 
