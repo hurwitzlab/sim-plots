@@ -37,7 +37,7 @@ function ohanaBlastTabToObj(hits) {
             freq[name] = [];
         if (typeof freq[name][depth] === 'undefined')
             freq[name][depth] = 0;
-        freq[name][depth]++;
+        freq[name][depth] += hit.count*1; // multiply by 1 to convert to int
     });
 
     return freq;
