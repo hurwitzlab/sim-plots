@@ -1,6 +1,7 @@
 import * as d3 from 'd3';
 import * as numeric from 'numericjs';
 import * as mdslib from 'mds.js';
+import {shortenLabel} from './utils.js';
 
 function pcoaPlot(id, data, params) { // TODO split data processing and rendering into separate functions
     params = params || {};
@@ -17,7 +18,7 @@ function pcoaPlot(id, data, params) { // TODO split data processing and renderin
         var j = 0;
         for (var key in row) {
             if (key === "")
-                labels.push(row[""]);
+                labels.push(shortenLabel(row[""]));
             else {
                 if (typeof matrix[i] === "undefined")
                     matrix[i] = [];
@@ -25,6 +26,9 @@ function pcoaPlot(id, data, params) { // TODO split data processing and renderin
             }
         }
     }
+
+    let maxLabelLen = labels.reduce((maxLen,label) => Math.max(maxLen,label.length),0);
+    console.log("maxLabelLen", maxLabelLen);
 
     var mds = new mdslib.mds();
 
@@ -36,9 +40,9 @@ function pcoaPlot(id, data, params) { // TODO split data processing and renderin
             positions[1],
             labels,
             {
-                w : params.width || Math.min(document.documentElement.clientWidth - 20),
-                h : params.height || Math.min(document.documentElement.clientHeight - 20),
-                padding : (typeof params.padding === "undefined" ? 100 : params.padding)
+                w : params.width || window.screen.width * .8 - maxLabelLen * 4 * 2, 
+                h : params.height || window.screen.height * .8, 
+                padding : params.padding || maxLabelLen * 4
             });
     }
     catch (error) {

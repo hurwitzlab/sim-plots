@@ -43,6 +43,10 @@ function ohanaBlastTabToObj(hits) {
     return freq;
 }
 
+function shortenLabel(s) {
+    return s.replace(/(\.fasta|\.fa|\.fastq|\.fq)$/i, "");
+}
+
 function getUrlVars() {
     var vars = {};
     var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi,
@@ -54,4 +58,5 @@ function getUrlVars() {
 
 export {simMatrixToObj};
 export {ohanaBlastTabToObj};
+export {shortenLabel};
 export {getUrlVars};
