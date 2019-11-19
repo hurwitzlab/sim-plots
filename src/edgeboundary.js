@@ -1,12 +1,13 @@
 import * as d3 from 'd3';
 import * as utils from './utils.js'
 
+
 // Create edge-bundling chart (adapted from https://bl.ocks.org/mbostock/1044242)
 function edgeboundary(id, data) { // TODO split data processing and rendering into separate functions
     // Parse query parameters
     var min_similarity = parseFloat(utils.getUrlVars()['min']) || 0.3;
 
-    var diameter = 600,
+    var diameter = window.screen.width * .5,
         radius = diameter / 2,
         innerRadius = radius - 155; //FIXME: hardcoded offset, instead calculate based on label size
 
@@ -76,7 +77,7 @@ function edgeboundary(id, data) { // TODO split data processing and rendering in
               .attr("dy", ".31em")
               .attr("transform", function(d) { return "rotate(" + (d.x - 90) + ")translate(" + (d.y + 8) + ",0)" + (d.x < 180 ? "" : "rotate(180)"); })
               .style("text-anchor", function(d) { return d.x < 180 ? "start" : "end"; })
-              .text(function(d) { return d.data.name; })
+              .text(function(d) { return utils.shortenLabel(d.data.name); })
               .on("mouseover", mouseovered)
               .on("mouseout", mouseouted);
     }

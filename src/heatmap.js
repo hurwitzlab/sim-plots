@@ -1,19 +1,19 @@
 import * as d3 from 'd3';
 import {legendColor} from 'd3-svg-legend';
-import {simMatrixToObj, ohanaBlastTabToObj} from './utils.js';
+import {simMatrixToObj, ohanaBlastTabToObj,shortenLabel} from './utils.js';
 
 function heatmap(id, data) { // TODO split data processing and rendering into separate functions
     var obj = d3.tsvParse("sseqid\tcount\n" + data); // Kludge: add header line
     obj = ohanaBlastTabToObj(obj);
-    console.log(obj);
+    console.log('ohanaBlastTabToObj:', obj);
 
     // Get row and column labels
     var xLabels = {};
     var yLabels = {};
     Object.keys(obj).forEach(xLabel => {
-        xLabels[xLabel] = 1;
+        xLabels[shortenLabel(xLabel)] = 1;
         Object.keys(obj[xLabel]).forEach(yLabel => {
-            yLabels[yLabel] = 1;
+            yLabels[shortenLabel(yLabel)] = 1;
         });
     });
     xLabels = Object.keys(xLabels);
@@ -159,10 +159,10 @@ function symmetricalHeatmap(id, data) { // TODO split data processing and render
     scores.forEach(function(node, i) {
         var idx_grp = node.name.indexOf('.');
         var group = "g";
-        var name = node.name;
+        var name = shortenLabel(node.name);
         if (idx_grp >= 0) {
             group = node.name.substring(0,idx_grp);
-            name = node.name.substring(idx_grp+1);
+        //    name = node.name.substring(idx_grp+1);
         }
 
         var n = {"name": name, "group": group, "index": i, "count": 0};
@@ -177,6 +177,10 @@ function symmetricalHeatmap(id, data) { // TODO split data processing and render
         matrix[i] = d3.range(n).map(function(j) { return {x: j, y: i, z: 0}; });
     });
     console.log("nodes:", nodes);
+
+    // Compute max label length
+    let maxLabelLen = nodes.reduce((maxLen,node) => Math.max(maxLen,node.name.length),0); 
+    console.log("maxLabelLen:", maxLabelLen);
 
     // Convert links to matrix; count character occurrences.
     scores.forEach(function(node) {
@@ -195,8 +199,8 @@ function symmetricalHeatmap(id, data) { // TODO split data processing and render
     });
     console.log("matrix:", matrix);
 
-    var innerRadius = 400;
-    var margin = {top: 0, right: 200, bottom: 200, left: 0},
+    var innerRadius = Math.min(window.screen.width, window.screen.height) / 2;
+    var margin = {top: 0, right: maxLabelLen*8, bottom: maxLabelLen*8, left: 0},
         width = innerRadius,
         height = innerRadius;
 
@@ -204,12 +208,11 @@ function symmetricalHeatmap(id, data) { // TODO split data processing and render
         z = d3.scaleLinear().domain([0, 4]).clamp(true),
         c = d3.scaleOrdinal(d3.schemeCategory10).domain(d3.range(10));
 
-
     // Create menu and svg
     var container = d3.select('#'+id);
 
-    var menu = container
-        .html('<aside style="margin-top:0px;"><p>Order: <select id="order"><option value="group">by Group</option><option value="name">by Name</option><option value="count">by Frequency</option></select></aside>');
+    var menu = container.append('div');
+    menu.html('<aside style="margin-top:0px;"><p>Order: <select id="order"><option value="group">by Group</option><option value="name">by Name</option><option value="count">by Frequency</option></select></aside>');
 
     var svg = container
         .append("svg")
@@ -247,7 +250,7 @@ function symmetricalHeatmap(id, data) { // TODO split data processing and render
         .attr("x2", width);
 
     row.append("text")
-        .attr("x", width )
+        .attr("x", width + 2 )
         .attr("y", x.bandwidth() / 2)
         .attr("dy", ".32em")
         .attr("text-anchor", "start")
@@ -263,7 +266,7 @@ function symmetricalHeatmap(id, data) { // TODO split data processing and render
         .attr("x1", -width);
 
     column.append("text")
-        .attr("x", -width)
+        .attr("x", -width - 2)
         .attr("y", x.bandwidth() / 2)
         .attr("dy", ".32em")
         .attr("text-anchor", "end")
