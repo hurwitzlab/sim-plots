@@ -12,19 +12,29 @@ function bubblePlot(id, data, params) { // TODO split data processing and render
     var maxValue = 0;
 
 //    console.log("data:", data);
-//    console.log("scores:", scores);
+    console.log("scores:", scores);
 
     scores.forEach(function(row) {
-        if (!row.sample || !row.name || !row.proportion)
-            console.error("sim-plots:bubblePlot: missing required field: ", row);
+        // The centrifuge output format changed naming of fields so handle both versions
+        let sample = row.sample;
+        if (!sample)
+            console.error('sim-plots:bubblePlot: missing "sample" property');
 
-        columns[row.sample] = 1;
+        let name = row.name || row.tax_name;
+        if (!name)
+            console.error('sim-plots:bubblePlot: missing "name" property');
 
-        if (typeof rows[row.name] === 'undefined')
-            rows[row.name] = {};
-        rows[row.name][row.sample] = row.proportion * 1; // convert to int with *1
+        let proportion = row.proportion || row.pct;
+        if (!proportion)
+            console.error('sim-plots:bubblePlot: missing "proportion" property');
 
-        maxValue = Math.max(maxValue, row.proportion);
+        columns[sample] = 1;
+
+        if (typeof rows[name] === 'undefined')
+            rows[name] = {};
+        rows[name][sample] = proportion * 1; // convert to int
+
+        maxValue = Math.max(maxValue, proportion);
     });
 
 //    console.log("maxValue:", maxValue);
